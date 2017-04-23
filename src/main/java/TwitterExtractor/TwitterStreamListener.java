@@ -1,26 +1,29 @@
 package TwitterExtractor;
 
-import TwitterExtractor.Dao.MongoDao;
+import TwitterExtractor.Dao.DBConnectionInsert;
+import TwitterExtractor.Dao.DBConnectionUpdate;
 import org.apache.log4j.Logger;
 import org.springframework.social.twitter.api.*;
-
 import java.io.Serializable;
+import java.sql.SQLException;
 
 
 public class TwitterStreamListener implements StreamListener, Serializable {
 
     private final Logger logger = Logger.getLogger(TwitterStreamListener.class);
-    private final SentimentAnalysis sentimentAnalysis = new SentimentAnalysis();
-    MongoDao mongoDao = MongoDao.getInstance();
 
 
     @Override
     public void onTweet(Tweet tweet) {
-        if(tweet.getLanguageCode().equals("en")){
-            logger.info("tweet = " + tweet);
-            int sentimentTweet = sentimentAnalysis.getSentimentTweet(tweet.getText());
+        if(tweet.getLanguageCode().equals("ru")){
+            logger.info("tweet = " + tweet.getText());
 
-            mongoDao.saveTweet(tweet, sentimentTweet);
+            try {
+                DBConnectionInsert.saveTweet(tweet);
+            } catch (SQLException e) {
+                logger.error("onTweet() : saveTweet()");
+                e.printStackTrace();
+            }
         }
     }
 
