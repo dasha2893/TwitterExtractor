@@ -17,8 +17,8 @@ public class DBConnectionInsert {
     private static DBConnectionInsert instance;
     private Connection connection;
     private String url = "jdbc:postgresql://localhost:5432/postgres";
-    private String username = "postgres";
-    private String password = "1118";
+    private String username = "";
+    private String password = "";
 
 
     private DBConnectionInsert() {
@@ -52,7 +52,7 @@ public class DBConnectionInsert {
             DBConnectionInsert instance = DBConnectionInsert.getInstance();
             Connection connection = instance.getConnection();
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("select * from accounts");
+            ResultSet resultSet = statement.executeQuery("select * from accounts limit 1");
             while (resultSet.next()){
                 resultAccounts.add(new Account(resultSet.getString(1).trim(),resultSet.getString(2).trim(),resultSet.getString(3).trim(),resultSet.getString(4).trim()));
             }

@@ -15,8 +15,8 @@ public class DBConnectionUpdate {
     private static DBConnectionUpdate instance;
     private Connection connection;
     private String url = "jdbc:postgresql://localhost:5432/postgres";
-    private String username = "postgres";
-    private String password = "1113";
+    private String username = "";
+    private String password = "";
 
 
     private DBConnectionUpdate() throws SQLException {
