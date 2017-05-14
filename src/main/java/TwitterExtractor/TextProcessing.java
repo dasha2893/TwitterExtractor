@@ -117,7 +117,7 @@ public class TextProcessing {
         if (result != null) {
             for (Info analysisOfWord : result) {
                 System.out.println(analysisOfWord.initial() + " -> " + analysisOfWord.lex() + " | " + analysisOfWord.rawResponse());
-                String jsonMorphPropertiesOfWord = analysisOfWord.rawResponse().replace(".*Some\\(\\S+\\)\\s|\\s","");
+                String jsonMorphPropertiesOfWord = analysisOfWord.rawResponse().replaceAll(".*Some\\(\\S+\\)\\s|\\s","");
 
                 ObjectMapper mapper = new ObjectMapper();
                 JSONWordAndMorphProp jsonWordAndMorphProp = null;
