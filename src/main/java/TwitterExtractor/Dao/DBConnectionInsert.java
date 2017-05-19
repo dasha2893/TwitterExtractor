@@ -79,6 +79,6 @@ public class DBConnectionInsert {
         java.util.Date date = tweet.getCreatedAt();
         String formatedDate = sdf.format(date);
 
-        statement.execute("INSERT INTO posts (text, date) VALUES ('"+post+"', '"+formatedDate+"')");
+        statement.execute("INSERT INTO tweets (text, date) VALUES ('"+post+"', '"+formatedDate+"')");
     }
 }

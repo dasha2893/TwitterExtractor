@@ -7,6 +7,7 @@ import TwitterExtractor.objects.SentimentPost;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import ru.stachek66.nlp.mystem.holding.Factory;
 import ru.stachek66.nlp.mystem.holding.MyStem;
@@ -53,10 +54,11 @@ public class TextProcessing {
 
     }
 
-    public static SentimentPost deleteEmoticons(String str) throws SQLException {
+    public static SentimentPost deleteEmoticons(String tweet) throws SQLException {
         logger.info("come into deleteEmoticons()");
-        String tweet = "";
         Integer mark = 0;
+        int countEmoticons = 0;
+        String emoticon = "";
         int countOpeningBracket = 0;
         int countСlosingBracket = 0;
 
@@ -65,16 +67,18 @@ public class TextProcessing {
         Connection connection = instance.getConnection();
         Statement statement = connection.createStatement();
 
-        str = str.replaceAll("((http|https|ftp):\\S+)|(@[A-Za-z-\\_]+)|(\\d+[A-Za-z]*)|(#[A-Za-z-\\_]+)|(#[А-Яа-я-\\_]+)", "");
+        tweet = tweet.replaceAll("((http|https|ftp):\\S+)|(@[A-Za-z-\\_]+)|(\\d+[A-Za-z]*)|(#[A-Za-z-\\_]+)|(#[А-Яа-я-\\_]+)", "");
 
-        ResultSet resultQuery = statement.executeQuery("SELECT delete_emoticons('" + str + "')");
-        if (resultQuery.next()) {
-            String result = resultQuery.getString(1);
-            String[] tweetAndSumMark = result.split("sum_of_mark=");
-            tweet = tweetAndSumMark[0];
-            mark = mark + Integer.valueOf(tweetAndSumMark[1]);
+        ResultSet resultQuery = statement.executeQuery("SELECT emoticon, mark from emoticons");
+        while (resultQuery.next()) {
+            emoticon = resultQuery.getString(1).trim();
+            int markOfEmoticon = resultQuery.getInt(2);
+            if(tweet.contains(emoticon)){
+                countEmoticons = StringUtils.countMatches(tweet,emoticon);
+                mark = mark + (countEmoticons * markOfEmoticon);
+                tweet = tweet.replace(resultQuery.getString(1).trim(), "");
+            }
         }
-        else tweet = str;
         statement.close();
 
         Pattern openingBracket = Pattern.compile("\\(");
@@ -102,7 +106,7 @@ public class TextProcessing {
     private static ArrayList<String> deleteNotEmotionalWords (String tweet) {
         logger.info("come into deleteNotEmotionalWords()");
 
-        Pattern pattern = Pattern.compile("(^ADVPRO.*)|(^ANUM.*)|(^APRO.*)|(^CONJ.*)|(^NUM.*)|(^PART.*)|(^PR.*)|(^SPRO.*)|(^S\\,persn.*)|(^S\\,patrn.*)|(^S\\,famn.*)");
+        Pattern pattern = Pattern.compile("(^ADVPRO.*)|(^ANUM.*)|(^APRO.*)|(^CONJ.*)|(^NUM.*)|(^PART.*)|(^PR.*)|(^SPRO.*)|(^S\\,persn.*)|(^S\\,patrn.*)");
         ArrayList<String> arrayWords = new ArrayList<String>();
 
         Iterable<Info> result = null;

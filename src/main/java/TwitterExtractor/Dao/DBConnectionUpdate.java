@@ -124,7 +124,7 @@ public class DBConnectionUpdate {
             logger.info("tweet.getTextPost()= " + tweet.getTextPost());
             logger.info("sentimentOfTweet= " + sentimentOfTweet);
             logger.info("tweet.getDate()= " + tweet.getDate());
-            statement.execute("UPDATE posts SET type="+sentimentOfTweet +"where id="+postId);
+            statement.execute("UPDATE tweets SET type="+sentimentOfTweet +"where id="+postId);
             connection.commit();
         }
         catch (SQLException e){

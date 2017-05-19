@@ -38,13 +38,13 @@ public class TwitterStreamExtractor {
         Statement statement1 = connection.createStatement();
 
         double countPosNegTest = 0;
-        ResultSet resultSet = statement.executeQuery("select count(*) from posts where to_date(date,'YYYY-MM-DD') < current_date and type is null");
+        ResultSet resultSet = statement.executeQuery("select count(*) from tweets where to_date(date,'YYYY-MM-DD') < current_date and type is null");
         if(resultSet.next()) countPosNegTest = Double.parseDouble(resultSet.getString(1));
         statement.close();
 
         for (int i=1; i<=countPosNegTest; i++){
             statement1 = connection.createStatement();
-            ResultSet resultQuery = statement1.executeQuery("select * from (select p.*, row_number() over (order by id) rn from posts p where to_date(date,'YYYY-MM-DD') < current_date and type is null)t where t.rn=" + i);
+            ResultSet resultQuery = statement1.executeQuery("select * from (select p.*, row_number() over (order by id) rn from tweets p where to_date(date,'YYYY-MM-DD') < current_date and type is null)t where t.rn=" + i);
             String tweet = "";
             int id = 0;
             if(resultQuery.next()) {
